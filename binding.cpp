@@ -1,163 +1,116 @@
 #include "binding.h"
+#include <napi.h>
 
-using v8::Exception;
-using v8::Function;
-using v8::FunctionCallbackInfo;
-using v8::FunctionTemplate;
-using v8::Isolate;
-using v8::Local;
-using v8::Number;
-using v8::Null;
-using v8::Object;
-using v8::String;
-using v8::Value;
-using v8::Persistent;
+Napi::FunctionReference HX711Wrapper::constructor;
 
-Persistent<Function> HX711Wrapper::constructor;
-
-HX711Wrapper::HX711Wrapper(uint8_t clockPin, uint8_t dataPin, uint8_t skipSetup) :
-	mSensor(new HX711(clockPin, dataPin, skipSetup))
+void HX711Wrapper::Init(Napi::Env env, Napi::Object exports)
 {
+  Napi::Function func = DefineClass(env, "HX711", {
+    InstanceMethod("read", &HX711Wrapper::read),
+    InstanceMethod("setScale", &HX711Wrapper::setScale),
+    InstanceMethod("setOffset", &HX711Wrapper::setOffset),
+    InstanceMethod("tare", &HX711Wrapper::tare),
+    InstanceMethod("getUnits", &HX711Wrapper::getUnits),
+    InstanceMethod("setGain", &HX711Wrapper::setGain),
+    InstanceMethod("getScale", &HX711Wrapper::getScale),
+    InstanceMethod("getOffset", &HX711Wrapper::getOffset)
+  });
 
+  constructor = Napi::Persistent(func);
+  constructor.SuppressDestruct();
+
+  exports.Set("HX711", func);
 }
 
-HX711Wrapper::~HX711Wrapper(){
-	delete mSensor;
+HX711Wrapper::HX711Wrapper(const Napi::CallbackInfo& info) : Napi::ObjectWrap<HX711Wrapper>(info)  {
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(env);
+
+  if (info.Length() < 2)
+  {
+    Napi::TypeError::New(env, "You need to pass 2 arguments").ThrowAsJavaScriptException();
+    return;
+  }
+
+  uint8_t clockPinArg = (uint32_t) info[0].ToNumber();
+  uint8_t dataPinArg = (uint32_t) info[1].ToNumber();
+
+  uint8_t skipSetup = 0;
+  if (info.Length() >= 3)
+    skipSetup = (uint8_t)info[2].ToBoolean();
+
+  HX711 hx711(clockPinArg, dataPinArg, skipSetup);
+  mSensor = &hx711;
 }
 
-void HX711Wrapper::InitModule(Local<Object> exports) {
-	Isolate* isolate = exports->GetIsolate();
-
-	// Prepare constructor template
-	Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
-	tpl->SetClassName(String::NewFromUtf8(isolate, "HX711"));
-	tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-	// Prototype
-	NODE_SET_PROTOTYPE_METHOD(tpl, "read", read);
-	NODE_SET_PROTOTYPE_METHOD(tpl, "setScale", setScale);
-	NODE_SET_PROTOTYPE_METHOD(tpl, "setOffset", setOffset);
-	NODE_SET_PROTOTYPE_METHOD(tpl, "tare", tare);
-	NODE_SET_PROTOTYPE_METHOD(tpl, "getUnits", getUnits);
-	NODE_SET_PROTOTYPE_METHOD(tpl, "setGain", setGain);
-	NODE_SET_PROTOTYPE_METHOD(tpl, "getOffset", getOffset);
-        NODE_SET_PROTOTYPE_METHOD(tpl, "getScale", getScale);
-
-	constructor.Reset(isolate, tpl->GetFunction());
-	exports->Set(String::NewFromUtf8(isolate, "HX711"), tpl->GetFunction());
+HX711Wrapper::~HX711Wrapper()
+{
+  delete mSensor;
 }
 
-void HX711Wrapper::read(const FunctionCallbackInfo<Value>& args) {
-	Isolate* isolate = args.GetIsolate();
+Napi::Value HX711Wrapper::read(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
 
-	HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-	int32_t value = obj->mSensor->read();
-
-	args.GetReturnValue().Set(Number::New(isolate, value));
+  int32_t value = mSensor->read();
+  return Napi::Number::New(env, value);
 }
 
-void HX711Wrapper::setScale(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
-
-	float scaleArg = args[0]->IsUndefined() ? 1.0f : args[0]->NumberValue();
-
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        obj->mSensor->setScale(scaleArg);
-
-        args.GetReturnValue().Set(Null(isolate));
+void HX711Wrapper::setScale(const Napi::CallbackInfo &info)
+{
+  float scaleArg = info[0].IsUndefined() ? 1.0f : info[0].ToNumber();
+  mSensor->setScale(scaleArg);
 }
 
-void HX711Wrapper::setOffset(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
-
-        int32_t offsetArg = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
-
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        obj->mSensor->setOffset(offsetArg);
-
-        args.GetReturnValue().Set(Null(isolate));
+void HX711Wrapper::setOffset(const Napi::CallbackInfo &info)
+{
+  int32_t offsetArg = info[0].IsUndefined() ? 0 : info[0].ToNumber();
+  mSensor->setOffset(offsetArg);
 }
 
-void HX711Wrapper::tare(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
-
-        uint8_t timesArg = args[0]->IsUndefined() ? 10 : args[0]->NumberValue();
-
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        obj->mSensor->tare(timesArg);
-
-        args.GetReturnValue().Set(Null(isolate));
+void HX711Wrapper::tare(const Napi::CallbackInfo &info)
+{
+  uint8_t timesArg = info[0].IsUndefined() ? 10 : info[0].ToNumber();
+  mSensor->tare(timesArg);
 }
 
-void HX711Wrapper::getUnits(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
+Napi::Value HX711Wrapper::getUnits(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
 
-        uint8_t timesArg = args[0]->IsUndefined() ? 10 : args[0]->NumberValue();
+  uint8_t timesArg = info[0].IsUndefined() ? 10 : info[0].ToNumber();
+  float value = mSensor->getUnits(timesArg);
 
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        float value = obj->mSensor->getUnits(timesArg);
-
-        args.GetReturnValue().Set(Number::New(isolate, value));
+  return Napi::Number::New(env, value);
 }
 
-void HX711Wrapper::setGain(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
-
-        uint8_t gainArg = args[0]->IsUndefined() ? 128 : args[0]->NumberValue();
-
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        obj->mSensor->setGain(gainArg);
-
-        args.GetReturnValue().Set(Null(isolate));
+void HX711Wrapper::setGain(const Napi::CallbackInfo &info)
+{
+  uint8_t gainArg = info[0].IsUndefined() ? 128 : info[0].ToNumber();
+  mSensor->setGain(gainArg);
 }
 
-void HX711Wrapper::getOffset(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
+Napi::Value HX711Wrapper::getOffset(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
 
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        int32_t value = obj->mSensor->getOffset();
+  int32_t value = mSensor->getOffset();
 
-        args.GetReturnValue().Set(Number::New(isolate, value));
+  return Napi::Number::New(env, value);
 }
 
-void HX711Wrapper::getScale(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
+Napi::Value HX711Wrapper::getScale(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
 
-        HX711Wrapper* obj = ObjectWrap::Unwrap<HX711Wrapper>(args.Holder());
-        float value = obj->mSensor->getScale();
+  float value = mSensor->getScale();
 
-        args.GetReturnValue().Set(Number::New(isolate, value));
+  return Napi::Number::New(env, value);
 }
 
-void HX711Wrapper::New(const FunctionCallbackInfo<Value>& args) {
-  	Isolate* isolate = args.GetIsolate();
-
-  	if (args.IsConstructCall()) {
-    		// Invoked as constructor: `new HX711(...)`
-    		if (args.Length() < 2) {
-   			// Throw an Error that is passed back to JavaScript
-    			isolate->ThrowException(Exception::TypeError(
-        			String::NewFromUtf8(isolate, "You need to pass 2 arguments")));
-    			return;
-  		}
-
-		uint8_t clockPinArg = (uint8_t)args[0]->NumberValue();
-		uint8_t dataPinArg = (uint8_t)args[1]->NumberValue();
-
-		uint8_t skipSetup = 0;
-		if (args.Length() >= 3 )
-			skipSetup = (uint8_t)args[2]->BooleanValue();
-
-    		HX711Wrapper* obj = new HX711Wrapper(clockPinArg, dataPinArg, skipSetup);
-    		obj->Wrap(args.This());
-    		args.GetReturnValue().Set(args.This());
-  	} else {
-    		// Invoked as plain function `HX711(...)`, turn into construct call.
-    		const int argc = 2;
-    		Local<Value> argv[argc] = { args[0], args[1] };
-    		Local<Function> cons = Local<Function>::New(isolate, constructor);
-    		args.GetReturnValue().Set(cons->NewInstance(argc, argv));
-  	}
+Napi::Object Init (Napi::Env env, Napi::Object exports) {
+  HX711Wrapper::Init(env, exports);
+  return exports;
 }
 
-NODE_MODULE(hx711, HX711Wrapper::InitModule)
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init);
