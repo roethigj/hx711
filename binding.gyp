@@ -1,20 +1,20 @@
 {
+  "link_settings": {
+    "libraries": ["-lwiringPi"]
+  },
   "targets": [
     {
       "target_name": "hx711",
-      "cflags!": [
-        "-fno-exceptions"
-      ],
-      "cflags_cc!": [
-        "-fno-exceptions"
-      ],
+      "cflags!": ["-fno-exceptions"],
+      "cflags_cc!": ["-fno-exceptions"],
+      "ldflags": ["-lwiringPi"],
       "sources": [
-        "binding.cpp", "hx711.cpp"
+        "binding.cpp",
+        "hx711.cpp"
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"
       ],
-      "libraries": [],
       "dependencies": [
         "<!(node -p \"require('node-addon-api').gyp\")"
       ],
