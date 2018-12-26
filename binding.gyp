@@ -9,8 +9,8 @@
       "cflags_cc!": ["-fno-exceptions"],
       "ldflags": ["-lwiringPi"],
       "sources": [
-        "binding.cpp",
-        "hx711.cpp"
+        "source/binding.cpp",
+        "source/hx711.cpp"
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"

@@ -2,7 +2,7 @@
   "name": "hx711",
   "version": "0.3.0",
   "description": "C Driver and Node Binding for HX711 Load Cell Amp",
-  "main": "hx711.js",
+  "main": "index.js",
   "directories": {
     "example": "examples"
   },
