@@ -22,7 +22,8 @@ void HX711Wrapper::Init(Napi::Env env, Napi::Object exports)
   exports.Set("HX711", func);
 }
 
-HX711Wrapper::HX711Wrapper(const Napi::CallbackInfo& info) : Napi::ObjectWrap<HX711Wrapper>(info)  {
+HX711Wrapper::HX711Wrapper(const Napi::CallbackInfo &info) : Napi::ObjectWrap<HX711Wrapper>(info)
+{
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
 
@@ -32,15 +33,10 @@ HX711Wrapper::HX711Wrapper(const Napi::CallbackInfo& info) : Napi::ObjectWrap<HX
     return;
   }
 
-  uint8_t clockPinArg = (uint32_t) info[0].ToNumber();
-  uint8_t dataPinArg = (uint32_t) info[1].ToNumber();
+  const uint8_t clockPin = (uint32_t)info[0].ToNumber();
+  const uint8_t dataPin = (uint32_t)info[1].ToNumber();
 
-  uint8_t skipSetup = 0;
-  if (info.Length() >= 3)
-    skipSetup = (uint8_t)info[2].ToBoolean();
-
-  HX711 hx711(clockPinArg, dataPinArg, skipSetup);
-  mSensor = &hx711;
+  mSensor = new HX711(clockPin, dataPin);
 }
 
 HX711Wrapper::~HX711Wrapper()
@@ -95,7 +91,6 @@ Napi::Value HX711Wrapper::getOffset(const Napi::CallbackInfo &info)
   Napi::Env env = info.Env();
 
   int32_t value = mSensor->getOffset();
-
   return Napi::Number::New(env, value);
 }
 
@@ -104,11 +99,11 @@ Napi::Value HX711Wrapper::getScale(const Napi::CallbackInfo &info)
   Napi::Env env = info.Env();
 
   float value = mSensor->getScale();
-
   return Napi::Number::New(env, value);
 }
 
-Napi::Object Init (Napi::Env env, Napi::Object exports) {
+Napi::Object Init(Napi::Env env, Napi::Object exports)
+{
   HX711Wrapper::Init(env, exports);
   return exports;
 }

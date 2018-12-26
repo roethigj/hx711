@@ -4,20 +4,18 @@
 
 #include "hx711.h"
 
-HX711::HX711(uint8_t clockPin, uint8_t dataPin, uint8_t skipSetup) :
+HX711::HX711(uint8_t clockPin, uint8_t dataPin) :
 	mGainBits(1),
 	mScale(1.0f),
 	mOffset(0),
 	mClockPin(clockPin),
 	mDataPin(dataPin)
 {
-	this->initialize(skipSetup);
-}
+	if(wiringPiSetup() == -1) {
+    printf("WiringPi initialization failed");
+    return;
+  }
 
-void HX711::initialize(uint8_t skipSetup){
-	if((!skipSetup) && wiringPiSetup() == -1){
-		printf("initialization failed");
-	}
 	pinMode(mClockPin, OUTPUT);
 	pinMode(mDataPin, INPUT);
 }
@@ -119,14 +117,3 @@ int32_t HX711::getOffset(){
 float HX711::getScale(){
 	return this->mScale;
 }
-
-int main(){
-	HX711 sensor(7, 0, 0);
-	sensor.tare();
-	sensor.setScale(16000);
-	while(true){
-		printf("%f\n", sensor.getUnits());
-		printf("%d\n", sensor.readAverage());
-	}
-}
-
