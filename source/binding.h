@@ -6,7 +6,7 @@ class HX711Wrapper : public Napi::ObjectWrap<HX711Wrapper>
 
 public:
   static void Init(Napi::Env env, Napi::Object exports);
-  HX711Wrapper(const Napi::CallbackInfo& info);
+  HX711Wrapper(const Napi::CallbackInfo &info);
   ~HX711Wrapper();
 
 private:
@@ -22,4 +22,5 @@ private:
   Napi::Value getOffset(const Napi::CallbackInfo &info);
 
   HX711 *mSensor;
+
 };
