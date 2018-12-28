@@ -51,18 +51,14 @@ void HX711::setGain(uint8_t gain)
 int32_t HX711::read()
 {
   // wait for the chip to become ready
-  while (!this->isReady())
-    ;
+  while (!this->isReady());
 
   int32_t data = 0;
   // pulse the clock pin 24 times to read the data
   for (uint8_t i = 24; i--;)
   {
     digitalWrite(mClockPin, HIGH);
-
-    digitalRead(mDataPin);
     data |= (digitalRead(mDataPin) << i);
-
     digitalWrite(mClockPin, LOW);
   }
 
