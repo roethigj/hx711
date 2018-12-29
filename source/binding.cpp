@@ -35,8 +35,10 @@ HX711Wrapper::HX711Wrapper(const Napi::CallbackInfo &info) : Napi::ObjectWrap<HX
 
   const uint8_t clockPin = (uint32_t)info[0].ToNumber();
   const uint8_t dataPin = (uint32_t)info[1].ToNumber();
+  const uint8_t gain = info[2].IsUndefined() ? 128 : info[2].ToNumber();
 
   mSensor = new HX711(clockPin, dataPin);
+  mSensor->setGain(gain);
 }
 
 HX711Wrapper::~HX711Wrapper()
