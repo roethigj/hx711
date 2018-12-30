@@ -1,7 +1,6 @@
-#include <inttypes.h>
+#pragma once
 
-#ifndef _HX711_H_
-#define _HX711_H_
+#include <inttypes.h>
 
 class HX711
 {
@@ -31,5 +30,3 @@ public:
   float getScale();
 
 };
-
-#endif //_HX711_H_
