@@ -1,6 +1,6 @@
 {
   "name": "@shroudedcode/hx711",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "C Driver and Node Binding for HX711 Load Cell Amp",
   "main": "index.js",
   "directories": {
