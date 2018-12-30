@@ -1,6 +1,6 @@
 {
-  "name": "hx711",
-  "version": "0.3.0",
+  "name": "@shroudedcode/hx711",
+  "version": "0.0.0",
   "description": "C Driver and Node Binding for HX711 Load Cell Amp",
   "main": "index.js",
   "directories": {
@@ -10,17 +10,10 @@
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dangrie158/hx711-driver.git"
-  },
-  "author": "Daniel Grießhaber",
+  "repository": "shroudedcode/hx711",
+  "author": "Niklas Higi <niklas@shroudedcode.com> (https://shroudedcode.com/)",
   "license": "MIT",
   "gypfile": true,
-  "bugs": {
-    "url": "https://github.com/dangrie158/SmartScale/issues"
-  },
-  "homepage": "https://github.com/dangrie158/SmartScale#readme",
   "dependencies": {
     "bindings": "^1.2.1",
     "node-addon-api": "^1.6.2"
