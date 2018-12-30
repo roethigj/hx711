@@ -11,11 +11,7 @@ HX711::HX711(uint8_t clockPin, uint8_t dataPin) :
   mClockPin(clockPin),
   mDataPin(dataPin)
 {
-  if (wiringPiSetup() == -1)
-  {
-    printf("WiringPi initialization failed");
-    return;
-  }
+  wiringPiSetupPhys();
 
   pinMode(mClockPin, OUTPUT);
   pinMode(mDataPin, INPUT);
