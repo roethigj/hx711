@@ -26,17 +26,17 @@ void HX711::setGain(uint8_t gain)
 {
   switch (gain)
   {
-  case GAIN_128:
+  // channel A, gain 128
+  case 128:
     this->mGainBits = 1;
     break;
-  case GAIN_64:
+  // channel A, gain 64
+  case 64:
     this->mGainBits = 3;
     break;
-  case GAIN_32:
+  // channel B, gain 32
+  case 32:
     this->mGainBits = 2;
-    break;
-  default:
-    //invalid gain, ignore
     break;
   }
 

@@ -3,15 +3,6 @@
 #ifndef _HX711_H_
 #define _HX711_H_
 
-//channel A, gain 128
-#define GAIN_128 128
-
-//channel A, gain 64
-#define GAIN_64 64
-
-//channel B, gain 32
-#define GAIN_32 32
-
 class HX711
 {
 
