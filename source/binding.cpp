@@ -11,7 +11,6 @@ void HX711Wrapper::Init(Napi::Env env, Napi::Object exports)
     InstanceMethod("setOffset", &HX711Wrapper::setOffset),
     InstanceMethod("tare", &HX711Wrapper::tare),
     InstanceMethod("getUnits", &HX711Wrapper::getUnits),
-    InstanceMethod("setGain", &HX711Wrapper::setGain),
     InstanceMethod("getScale", &HX711Wrapper::getScale),
     InstanceMethod("getOffset", &HX711Wrapper::getOffset)
   });
@@ -80,12 +79,6 @@ Napi::Value HX711Wrapper::getUnits(const Napi::CallbackInfo &info)
   float value = mSensor->getUnits(timesArg);
 
   return Napi::Number::New(env, value);
-}
-
-void HX711Wrapper::setGain(const Napi::CallbackInfo &info)
-{
-  uint8_t gainArg = info[0].IsUndefined() ? 128 : info[0].ToNumber();
-  mSensor->setGain(gainArg);
 }
 
 Napi::Value HX711Wrapper::getOffset(const Napi::CallbackInfo &info)

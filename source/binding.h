@@ -17,7 +17,6 @@ private:
   void setOffset(const Napi::CallbackInfo &info);
   void tare(const Napi::CallbackInfo &info);
   Napi::Value getUnits(const Napi::CallbackInfo &info);
-  void setGain(const Napi::CallbackInfo &info);
   Napi::Value getScale(const Napi::CallbackInfo &info);
   Napi::Value getOffset(const Napi::CallbackInfo &info);
 

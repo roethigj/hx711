@@ -1,12 +1,11 @@
 declare class HX711 {
-  constructor(clockPin: number, dataPin: number)
+  constructor(clockPin: number, dataPin: number, gain?: number)
 
   read(): number
   setScale(scale: number): void
   setOffset(offset: number): void
   tare(times?: number): void
   getUnits(times?: number): number
-  setGain(gain: 128 | 64 | 32): void
   getOffset(): number
   getScale(): number
 }
