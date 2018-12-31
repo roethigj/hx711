@@ -1,6 +1,6 @@
 {
   "name": "@shroudedcode/hx711",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A native Node.js module to interface with the HX711 load cell amplifier",
   "main": "index.js",
   "directories": {
