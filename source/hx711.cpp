@@ -54,14 +54,17 @@ int32_t HX711::read()
   for (uint8_t i = 24; i--;)
   {
     digitalWrite(mClockPin, HIGH);
-    data |= (digitalRead(mDataPin) << i);
+    delayMicroseconds(1);
     digitalWrite(mClockPin, LOW);
+
+    data |= (digitalRead(mDataPin) << i);
   }
 
   // set the channel and the gain factor for the next reading
   for (int i = 0; i < mGainBits; i++)
   {
     digitalWrite(mClockPin, HIGH);
+    delayMicroseconds(1);
     digitalWrite(mClockPin, LOW);
   }
 
